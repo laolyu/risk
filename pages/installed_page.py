@@ -8,5 +8,5 @@ class InstalledPage(BasePage):
 
     # 页面元素对象
     def alert_installed(self):
-        self.find_element_and_click(self._alert_installed)
+        self.find_click(self._alert_installed)
         return self

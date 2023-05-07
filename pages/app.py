@@ -1,17 +1,12 @@
 # coding:utf-8
-import pytest
 from appium import webdriver
-import datetime
 from loguru import logger
 from selenium.webdriver.remote.webdriver import WebDriver
-
-
-# from selenium.webdriver.support.wait import WebDriverWait
 from pages.main_page import MainPage
 
 
 class App:
-    driver: WebDriver = None
+    driver: webdriver = None
 
     def __init__(self, driver):
         logger.info('000033333300')
@@ -25,6 +20,7 @@ class App:
         caps = {'platformName': 'android',
                 'deviceName': 'hw',
                 'newCommandTimeout': 20,
+                'automationName': 'UiAutomator2',
                 # 'appPackage': 'com.xueqiu.android',
                 # 'appActivity': '.view.WelcomeActivityAlias',
                 # 'autoGrantPermissions': 'true',  #自动同意权限申请

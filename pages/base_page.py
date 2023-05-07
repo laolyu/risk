@@ -1,6 +1,8 @@
 # coding:utf-8
 import datetime
 import inspect
+from time import sleep
+
 from loguru import logger
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webdriver import WebDriver
@@ -15,24 +17,26 @@ class BasePage:
     def __init__(self, driver: WebDriver):
         self.driver = driver
 
-    def find_element(self, locator):
+    def find_ele(self, loc):
         try:
             # self.take_screenshot()
-            logger.info(f'finding {locator}')
-            return self.driver.find_element(*locator)
-        except:
+            logger.info(f'going to find{loc}')
+            return self.driver.find_element(*loc)
+        except Exception as e:
+            logger.info(e)
             self.handle_exception()
-            return self.driver.find_element(*locator)
+            logger.info(f'to find again')
+            return self.driver.find_element(*loc)
 
-    def find_element_and_click(self, locator):
+    def find_click(self, locator):
         try:
-            logger.info(f'found locator and click it')
-            # self.take_screenshot()
-            # 如果click也有异常，可以这样处理
-            self.find_element(locator).click()
-        except:
-            self.handle_exception()
-            self.find_element(locator).click()
+            self.take_screenshot()
+            self.find_ele(locator).click()
+            logger.info(f'found and click{locator}')
+        except Exception as e:
+            logger.info(e)
+            self.handle_exception()  # 如果click也有异常，可以这样处理
+            self.find_ele(locator).click()
 
     def handle_exception(self):
         logger.info('sth may exception')
@@ -59,15 +63,28 @@ class BasePage:
         self.driver.implicitly_wait(10)
 
     def take_screenshot(self):
-        # 获取当前时间
-        now = datetime.datetime.now()
-        # 格式化时间戳
-        timestamp = now.strftime('%Y-%m-%d %H:%M:%S')
-        # 获取设备名称
-        device_name = self.driver.desired_capabilities['deviceName']
-        # 获取函数名称
-        function_name = inspect.currentframe().f_back.f_code.co_name
-        # 拼接文件名
-        filename = f'{device_name}_{timestamp}_{function_name}.png'
-        # 截图
-        self.driver.save_screenshot(filename)
+        try:
+            # 获取当前时间
+            now = datetime.datetime.now()
+            # 格式化时间戳
+            timestamp = now.strftime('%Y%m%d_%H%M%S')
+            # 获取设备名称
+            device_name = self.driver.desired_capabilities['deviceName'].replace(":", "-")
+            # 获取函数名称
+            function_name = inspect.currentframe().f_back.f_code.co_name
+            # 拼接文件名
+            filename = f'{device_name}_{timestamp}_{function_name}.png'
+            # 截图
+            self.driver.save_screenshot(f"C:/abtest/automation/UI/risk/logs/screenshots/{filename}")
+            sleep(2)
+            logger.info(f'saved {filename}')
+        except Exception as e:
+            logger.info(e)
+
+    def alter_risk(self):
+        try:
+            logger.info('switch to alert')
+            self.take_screenshot()
+            return self.driver.switch_to.alert
+        except Exception as e:
+            logger.info(e)
